@@ -90,7 +90,7 @@ sudo apt-get install ros-noetic-ros-numpy
 pip3 install open3d==0.10.0.0
 ```
 
-## How to use
+## How to use (Case velodyne16)
 
 1. Turn on Lidar and IMU node
 
