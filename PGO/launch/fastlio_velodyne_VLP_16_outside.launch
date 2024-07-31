@@ -1,0 +1,57 @@
+<launch>
+
+    <param name="scan_line" type="int" value="16" />
+
+    <!-- 1이면 매핑 주파수 10 Hz, 2이면 매핑 주파수 5 Hz. 1을 사용하는 것을 권장하며, 자동으로 주파수를 조정합니다 -->
+    <param name="mapping_skip_frame" type="int" value="1" />
+
+    <!-- 너무 가까운 점들을 제거합니다 -->
+    <param name="minimum_range" type="double" value="0.1"/>
+
+    <param name="mapping_line_resolution" type="double" value="0.2"/>
+    <param name="mapping_plane_resolution" type="double" value="0.4"/>
+
+    <param name="mapviz_filter_size" type="double" value="0.1"/>
+
+    <!-- SC-A-LOAM -->
+    <param name="keyframe_meter_gap" type="double" value="1"/> 
+    <param name="keyframe_deg_gap" type="double" value="10.0"/> 
+
+    <!-- Scan Context -->
+    <param name="sc_dist_thres" type="double" value="0.2"/> <!-- SC-A-LOAM, 외부 이상치를 방지하려면 0.1-0.15 사용 -->
+    <param name="sc_max_radius" type="double" value="40.0"/> <!-- 실내의 경우 20 또는 40 -->
+    <!-- <param name="sc_max_radius" type="double" value="80.0"/> 실외의 경우 -->
+
+    <!-- 루프 클로저 -->
+    <param name="historyKeyframeSearchRadius" value="0.5"/>
+    <param name="historyKeyframeSearchTimeDiff" value=" 30.0"/>
+    <param name="historyKeyframeSearchNum" value="20"/>
+    <param name="speedFactor" value="1"/>           <!-- 속도 인자 -->
+    <param name="loopClosureFrequency" value="4.0"/> <!-- 입력 데이터 주파수에 비례 -->
+    <param name="graphUpdateFrequency" value="2.0"/>
+    <param name="graphUpdateTimes" value="5"/> <!-- 각 업데이트마다 ism->update 테스트 -->
+    <param name="loopNoiseScore" value="0.1"/> <!-- 0.02 -->
+    <param name="vizmapFrequency" value="10"/>
+    <param name="loopFitnessScoreThreshold" value="0.3"/> <!-- ICP 점수 -->
+    
+    <param name="lidar_type" type="string" value="VLP16"/> 
+    <remap from="/velodyne_points" to="/velodyne_points"/>
+    
+    <!-- FASTLIO2에서 입력 -->
+    <remap from="/aft_mapped_to_init" to="/Odometry"/>
+    <remap from="/velodyne_cloud_registered_local" to="/cloud_registered_body"/>
+    <remap from="/cloud_for_scancontext" to="/cloud_registered_lidar"/>   <!-- ScanContext의 성능을 향상시키기 위해 라이다-자기 중심 좌표가 필요합니다 -->
+
+    <!-- 유틸리티 -->
+    <param name="save_directory" type="string" value="$(env HOME)/Desktop/catkin_fastlio_slam/data/"/>  <!-- 이 경로를 변경하고 /로 끝나야 합니다 -->
+
+    <!-- 노드 -->
+    <node pkg="aloam_velodyne" type="alaserPGO" name="alaserPGO" output="screen" /> <!-- Scan Context 기반 PGO -->
+
+    <!-- 시각화 -->
+    <arg name="rviz" default="true" />
+    <group if="$(arg rviz)">
+        <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz_sc_pgo" args="-d $(find aloam_velodyne)/rviz_cfg/aloam_velodyne.rviz" />
+    </group>
+
+</launch>

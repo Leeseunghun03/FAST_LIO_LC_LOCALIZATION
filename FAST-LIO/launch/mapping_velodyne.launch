@@ -1,0 +1,45 @@
+<launch>
+  <!-- VLP-16 LiDAR용 velodyne16 실행 파일 -->
+
+    <arg name="lc_enable" default="true"/>
+    <arg name="rviz" default="true" />
+
+    <rosparam command="load" file="$(find fast_lio)/config/velodyne16.yaml" />
+
+    <!-- 파라미터 조정 설명:  -->
+    <!-- point_filter_num와 filter_size_surf는 필터링 파라미터로, 값이 작을수록 전처리 효과는 좋지만 실행 속도는 느려집니다 -->
+    <param name="feature_extract_enable" type="bool" value="0"/>
+    <param name="point_filter_num" type="int" value="4"/>
+    <param name="max_iteration" type="int" value="3" />
+    <param name="scan_publish_enable" type="bool" value="1" />
+	  <param name="dense_publish_enable" type="bool" value="1" />
+
+    <!-- Nomally, Same "filter_size_map" -->
+    <param name="filter_size_surf" type="double" value="0.2" />   <!-- 현재 점군 필터 -->
+
+    <!-- Voxel size Indoor: 0.2~0.3, Outdoor: 0.4 >= value -->
+    <param name="filter_size_map" type="double" value="0.2" />    <!-- 맵 필터 -->
+
+    <param name="cube_side_length" type="double" value="1000" />
+    <param name="runtime_pos_log_enable" type="bool" value="0" />
+    <param name="pcd_save_enable" type="bool" value="0" />
+
+    <!-- 시각화 -->
+    <param name="visulize_map" value="true"/>
+
+    <!-- 최적화 -->
+    <param name="recontructKdTree" value="$(arg lc_enable)"/> <!-- ikdtree 업데이트 활성화 -->
+    <param name="updateState" value="$(arg lc_enable)"/>   <!-- 상태 업데이트 활성화 -->
+    <param name="updateFrequency" value="30"/> <!-- updateFrequency개의 점군을 수신할 때마다 업데이트, 너무 크면 안 됨 -->
+    
+    <node pkg="fast_lio" type="fastlio_mapping" name="laserMapping" output="screen" /> 
+
+    <group if="$(arg rviz)">
+    <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz_fast_lio" args="-d $(find fast_lio)/rviz_cfg/loam_livox.rviz" />
+    </group>
+
+    <node pkg="tf" type="static_transform_publisher" name="footprint2body" args="0 0 0 0 0 0 body base_footprint 10" />
+
+    <include file="$(find aloam_velodyne)/launch/fastlio_velodyne_VLP_16_outside.launch"/>
+
+</launch>
