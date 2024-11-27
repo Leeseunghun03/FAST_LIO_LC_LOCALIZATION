@@ -14,15 +14,10 @@
 wget -O Eigen.zip https://gitlab.com/libeigen/eigen/-/archive/3.3.4/eigen-3.3.4.zip
 unzip Eigen.zip
 cd eigen-3.3.4/
-
 mkdir build
-
 cd build
-
 cmake ..
-
 make -j2
-
 sudo make install
 ```
 
@@ -30,7 +25,6 @@ sudo make install
 
 ```
 sudo apt-get install libpcl-dev
-
 sudo apt-get install ros-noetic-pcl-conversions ros-noetic-pcl-ros
 ```
 
@@ -38,17 +32,11 @@ sudo apt-get install ros-noetic-pcl-conversions ros-noetic-pcl-ros
 
 ```
 wget -O ~/Downloads/gtsam.zip https://github.com/borglab/gtsam/archive/4.0.0-alpha2.zip
-  
 cd ~/Downloads/ && unzip gtsam.zip -d ~/Downloads/
-  
 cd ~/Downloads/gtsam-4.0.0-alpha2/
-
 mkdir build
-
 cd build
-
 cmake -DGTSAM_USE_SYSTEM_EIGEN=ON ..
-
 sudo make install
 ```
 
@@ -56,23 +44,14 @@ sudo make install
 
 ```
 sudo apt-get install libgoogle-glog-dev libgflags-dev
-
 sudo apt-get install libatlas-base-dev
-
 sudo apt-get install libsuitesparse-dev
-
 git clone https://github.com/ceres-solver/ceres-solver.git
-
 mkdir ceres-bin
-
 cd ceres-bin
-
 cmake ../ceres-solver
-
 make -j3
-
 make test
-
 sudo make install
 ```
 
