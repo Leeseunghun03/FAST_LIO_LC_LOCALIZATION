@@ -12,9 +12,7 @@
 ### EIGEN
 ```
 wget -O Eigen.zip https://gitlab.com/libeigen/eigen/-/archive/3.3.4/eigen-3.3.4.zip
-
 unzip Eigen.zip
-
 cd eigen-3.3.4/
 
 mkdir build
